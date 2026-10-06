@@ -112,22 +112,19 @@ namespace PascalCompiler
         // Проверочный запуск лексического анализа.
         public void Analyze()
         {
-            Console.WriteLine("ЛЕКСИЧЕСКИЙ АНАЛИЗ");
-            Console.WriteLine("------------------");
+            Console.WriteLine("ЛЕКСИЧЕСКИЙ АНАЛИЗ:\n");
 
             while (!InputOutput.EndOfFile)
             {
                 Lexeme lexeme = GetNextLexeme();
 
-                if (lexeme.Code != 0)
+                if (lexeme.Code != unknown)
                 {
                     Console.WriteLine(
                         "Код лексемы: " +
                         lexeme.Code);
                 }
             }
-
-            Console.WriteLine("------------------");
         }
 
         // Получить следующую лексему.
@@ -142,7 +139,9 @@ namespace PascalCompiler
 
             if (InputOutput.EndOfFile)
             {
-                return new Lexeme(0, "");
+                return new Lexeme(
+                    unknown,
+                    "");
             }
 
             // Идентификатор или ключевое слово.
@@ -160,7 +159,7 @@ namespace PascalCompiler
                 byte keywordCode =
                     _keywords.CheckKeyword(name);
 
-                if (keywordCode != 0)
+                if (keywordCode != unknown)
                 {
                     return new Lexeme(
                         keywordCode,
@@ -184,20 +183,20 @@ namespace PascalCompiler
                     InputOutput.NextCh();
                 }
 
+                // Проверяем диапазон.
+                if (InputOutput.CurrentChar == '.' &&
+                    InputOutput.PeekNextChar() == '.')
+                {
+                    return new Lexeme(
+                        intconst,
+                        number);
+                }
+
                 // Вещественное число.
                 if (InputOutput.CurrentChar == '.')
                 {
                     InputOutput.NextCh();
 
-                    // Проверяем диапазон ...
-                    if (InputOutput.CurrentChar == '.')
-                    {
-                        return new Lexeme(
-                            intconst,
-                            number);
-                    }
-
-                    // После точки должны быть цифры.
                     if (char.IsDigit(
                         InputOutput.CurrentChar))
                     {
@@ -275,14 +274,6 @@ namespace PascalCompiler
 
                 case '*':
                     InputOutput.NextCh();
-
-                    // Если это конец комментария *).
-                    if (InputOutput.CurrentChar == ')')
-                    {
-                        InputOutput.NextCh();
-
-                        return GetNextLexeme();
-                    }
 
                     return new Lexeme(
                         multiply,
@@ -449,6 +440,8 @@ namespace PascalCompiler
             }
         }
 
+
+
         // Пропуск комментария { ... }.
         private void SkipBraceComment()
         {
@@ -464,6 +457,10 @@ namespace PascalCompiler
 
                 InputOutput.NextCh();
             }
+
+            InputOutput.Error(
+                13,
+                InputOutput.CurrentPosition);
         }
 
         // Пропуск комментария (* ... *).
@@ -488,6 +485,10 @@ namespace PascalCompiler
                     InputOutput.NextCh();
                 }
             }
+
+            InputOutput.Error(
+                13,
+                InputOutput.CurrentPosition);
         }
     }
 }

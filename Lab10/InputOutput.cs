@@ -225,6 +225,24 @@ namespace PascalCompiler
             }
         }
 
+        public static char PeekNextChar()
+        {
+            if (_positionNow.LineNumber > _lines.Count)
+            {
+                return '\0';
+            }
+
+            int index =
+                (int)_positionNow.CharNumber;
+
+            if (index >= _lastInLine)
+            {
+                return '\0';
+            }
+
+            return _line[index];
+        }
+
         public static void Finish()
         {
             if (_errors.Count > 0)

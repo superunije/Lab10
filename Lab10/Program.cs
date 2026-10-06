@@ -27,6 +27,8 @@ namespace PascalCompiler
             SyntaxAnalyzer syntaxAnalyzer =
                 new SyntaxAnalyzer(lexicalAnalyzer);
 
+            // lexicalAnalyzer.Analyze();
+
             syntaxAnalyzer.Analyze();
 
             InputOutput.Finish();

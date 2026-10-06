@@ -22,8 +22,7 @@ namespace PascalCompiler
 
         public void Analyze()
         {
-            Console.WriteLine("СИНТАКСИЧЕСКИЙ АНАЛИЗ");
-            Console.WriteLine("---------------------");
+            Console.WriteLine("СИНТАКСИЧЕСКИЙ АНАЛИЗ:\n");
 
             ParseProgram();
 
@@ -44,8 +43,6 @@ namespace PascalCompiler
                 Console.WriteLine(
                     "Количество синтаксических ошибок: 0");
             }
-
-            Console.WriteLine("---------------------");
         }
 
         // Переход к следующей лексеме.
